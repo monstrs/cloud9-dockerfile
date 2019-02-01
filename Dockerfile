@@ -1,4 +1,4 @@
-FROM node:0.12.6
+FROM node:11
 MAINTAINER Andrey Linko <AndreyLinko@gmail.com>
 
 ENV HOME /cloud9/home
@@ -7,8 +7,15 @@ RUN mkdir -p /cloud9/home/.c9
 RUN mkdir /workspace
 
 ADD user.settings /cloud9/home/.c9/
+ADD project.settings /cloud9/home/.c9/
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq git-core
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq git-core locales zip
+
+RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment \
+  && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+  && echo "LANG=en_US.UTF-8" > /etc/locale.conf \
+  && locale-gen en_US.UTF-8
+
 RUN git clone https://github.com/c9/core.git /cloud9/sdk
 RUN /cloud9/sdk/scripts/install-sdk.sh
 
